@@ -1,0 +1,20 @@
+{
+  "name": "event_mixin",
+  "version": "1.0.0",
+  "description": "portable event emitter analog",
+  "main": "index.js",
+  "scripts": {
+    "install": "iced -o lib -c src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hu2prod/event_mixin.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hu2prod/event_mixin/issues"
+  },
+  "homepage": "https://github.com/hu2prod/event_mixin#readme"
+}
