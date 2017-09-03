@@ -1,5 +1,6 @@
 require 'fy'
-@event_mixin_constructor = (_t)->
+window = global
+window.event_mixin_constructor = (_t)->
   _t.$event_hash = {}
   _t.on "delete", ()->
     for k,v of _t.$event_hash
@@ -7,7 +8,7 @@ require 'fy'
       _t.$event_hash[k].clear()
     return
 
-@event_mixin = (_t)->
+window.event_mixin = (_t)->
   _t.prototype.$delete_state = false
   _t.prototype.$event_hash = {}
   _t.prototype.delete ?= ()->
