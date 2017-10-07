@@ -1,81 +1,25 @@
-require 'fy'
 window = global
-window.event_mixin_constructor = (_t)->
-  _t.$event_hash = {}
-  _t.on "delete", ()->
-    for k,v of _t.$event_hash
-      continue if k == "delete" # т.к. нормально не сотрет
-      _t.$event_hash[k].clear()
+window.lock_mixin_constructor = (_t)->
+  _t.$lock_cb_list = []
+window.lock_mixin = (_t)->
+  _t.prototype.$lock_cb_list = []
+  _t.prototype.$limit = 1
+  _t.prototype.lock = (on_end)->
+    if @$limit > 0
+      @$limit--
+      on_end()
+    else
+      @$lock_cb_list.push on_end
     return
-
-window.event_mixin = (_t)->
-  _t.prototype.$delete_state = false
-  _t.prototype.$event_hash = {}
-  _t.prototype.delete ?= ()->
-    @dispatch "delete"
+  _t.prototype.unlock = ()->
+    call_later ()=>
+      if @$lock_cb_list.length
+        cb = @$lock_cb_list.shift()
+        cb()
+      else
+        @$limit++
     return
-  _t.prototype.once = (event_name, cb)->
-    need_remove = ()=>
-      @off event_name, need_remove
-      cb()
-      return
-    @on event_name, need_remove
-    return
-  
-  _t.prototype.ensure_on = (event_name, cb)->
-    if event_name instanceof Array
-      for v in event_name
-        @ensure_on v, cb
-      return @
-    @$event_hash[event_name] ?= []
-    if !@$event_hash[event_name].has cb
-      @$event_hash[event_name].push cb
-    @
-  _t.prototype.on = (event_name, cb)->
-    if event_name instanceof Array
-      for v in event_name
-        @on v, cb
-      return @
-    @$event_hash[event_name] ?= []
-    @$event_hash[event_name].push cb
-    @
-  
-  _t.prototype.off = (event_name, cb)->
-    @$delete_state = true
-    if event_name instanceof Array
-      for v in event_name
-        @off v, cb
-      return
-    list = @$event_hash[event_name]
-    if !list
-      puts "probably lose some important because no event_name '#{event_name}' found"
-      e = new Error
-      puts e.stack
-      return
-    # нельзя удалять т.к. можем поломать кому-то итерацию по циклу
-    idx = list.idx cb
-    if idx >= 0
-      list[idx] = null
-    return
-  
-  _t.prototype.dispatch = (event_name, hash={})->
-    if @$event_hash[event_name]
-      for cb in list = @$event_hash[event_name]
-        continue if cb == null
-        try
-          cb.call @, hash
-        catch e
-          perr e
-      if @$delete_state
-        while 0 < idx = list.idx null
-          list.remove_idx idx
-        @$delete_state = false
-    return
-
-    
-class @Event_mixin
-  event_mixin @
-
+class window.Lock_mixin
+  lock_mixin @
   constructor : ()->
-    event_mixin_constructor @
-
+    lock_mixin_constructor @
