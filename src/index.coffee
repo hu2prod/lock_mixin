@@ -1,6 +1,9 @@
+require 'fy'
+
 window = global
 window.lock_mixin_constructor = (_t)->
   _t.$lock_cb_list = []
+
 window.lock_mixin = (_t)->
   _t.prototype.$lock_cb_list = []
   _t.prototype.$limit = 1
@@ -11,6 +14,7 @@ window.lock_mixin = (_t)->
     else
       @$lock_cb_list.push on_end
     return
+  
   _t.prototype.unlock = ()->
     call_later ()=>
       if @$lock_cb_list.length
@@ -19,7 +23,10 @@ window.lock_mixin = (_t)->
       else
         @$limit++
     return
+
 class window.Lock_mixin
   lock_mixin @
   constructor : ()->
     lock_mixin_constructor @
+
+@Lock_mixin = window.Lock_mixin
