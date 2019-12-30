@@ -6,6 +6,7 @@ window.lock_mixin_constructor = (_t)->
 
 window.lock_mixin = (_t)->
   _t.prototype.$lock_cb_list = []
+  _t.prototype.$drain_cb = null
   _t.prototype.$count = 0
   _t.prototype.$limit = 1
   _t.prototype.lock = (on_end)->
@@ -23,13 +24,16 @@ window.lock_mixin = (_t)->
         cb()
       else
         @$count--
+        if @$count == 0 and cb = @$drain_cb
+          @$drain_cb = null
+          cb()
     return
   
   _t.prototype.drain = (on_end)->
     if @$count == 0
       on_end()
     else
-      @$lock_cb_list.push on_end
+      @$drain_cb = on_end
     return
 
 class window.Lock_mixin
