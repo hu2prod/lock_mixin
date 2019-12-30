@@ -21,33 +21,33 @@ describe 'index section', ()->
   
   describe 'lock_test', ()->
     it 'pass', (done)->
-      lock = new Lock_mixin
-      assert.equal lock.$limit, 1
-      await lock.lock defer()
-      assert.equal lock.$limit, 0
-      lock.unlock()
-      assert.equal lock.$limit, 0
+      target = new Lock_mixin
+      assert.equal target.$count, 0
+      await target.lock defer()
+      assert.equal target.$count, 1
+      target.unlock()
+      assert.equal target.$count, 1
       await setTimeout defer(), 10
-      assert.equal lock.$limit, 1
+      assert.equal target.$count, 0
       done()
       return
     
     it 'lock', (done)->
-      lock = new Lock_mixin
-      assert.equal lock.$limit, 1
-      await lock.lock defer()
-      assert.equal lock.$limit, 0
+      target = new Lock_mixin
+      assert.equal target.$count, 0
+      await target.lock defer()
+      assert.equal target.$count, 1
       setTimeout ()->
-        lock.unlock()
+        target.unlock()
       , 10
-      await lock.lock defer()
-      assert.equal lock.$limit, 0
+      await target.lock defer()
+      assert.equal target.$count, 1
       await setTimeout defer(), 10
-      assert.equal lock.$limit, 0
+      assert.equal target.$count, 1
       
-      lock.unlock()
+      target.unlock()
       await setTimeout defer(), 10
-      assert.equal lock.$limit, 1
+      assert.equal target.$count, 0
       done()
       return
   
