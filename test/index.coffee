@@ -1,9 +1,9 @@
-assert = require 'assert'
+assert = require "assert"
 
-mod = require '../src/index.coffee'
+mod = require "../src/index.coffee"
 
-describe 'index section', ()->
-  it 'mixin constructor', ()->
+describe "index section", ()->
+  it "mixin constructor", ()->
     class A
       lock_mixin @
       constructor:()->
@@ -11,16 +11,16 @@ describe 'index section', ()->
     new A
     return
   
-  it 'mixin class global', ()->
+  it "mixin class global", ()->
     new Lock_mixin
     return
   
-  it 'mixin class exports', ()->
+  it "mixin class exports", ()->
     new mod.Lock_mixin
     return
   
-  describe 'lock_test', ()->
-    it 'pass', (done)->
+  describe "lock_test", ()->
+    it "pass", (done)->
       target = new Lock_mixin
       assert.equal target.$count, 0
       await target.lock defer()
@@ -32,7 +32,7 @@ describe 'index section', ()->
       done()
       return
     
-    it 'lock', (done)->
+    it "lock", (done)->
       target = new Lock_mixin
       assert.equal target.$count, 0
       await target.lock defer()
@@ -51,7 +51,7 @@ describe 'index section', ()->
       done()
       return
     
-    it 'no drain', (done)->
+    it "no drain", (done)->
       target = new Lock_mixin
       target.$limit = 10
       
@@ -64,7 +64,7 @@ describe 'index section', ()->
       assert target.$count > 0
       done()
     
-    it 'empty drain', (done)->
+    it "empty drain", (done)->
       target = new Lock_mixin
       target.$limit = 10
       await target.drain defer()
@@ -73,7 +73,7 @@ describe 'index section', ()->
       assert.equal target.$lock_cb_list.length, 0
       done()
     
-    it 'drain', (done)->
+    it "drain", (done)->
       target = new Lock_mixin
       target.$limit = 10
       
@@ -87,5 +87,11 @@ describe 'index section', ()->
       
       assert.equal target.$count, 0
       assert.equal target.$lock_cb_list.length, 0
+      done()
+    
+    it "wrap", (done)->
+      target = new Lock_mixin
+      await target.wrap done, defer(done)
+      
       done()
   

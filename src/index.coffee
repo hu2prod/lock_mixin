@@ -6,6 +6,7 @@ window.lock_mixin_constructor = (_t)->
 
 window.lock_mixin = (_t)->
   _t.prototype.$lock_cb_list = []
+  # TODO drain_cb_list
   _t.prototype.$drain_cb = null
   _t.prototype.$count = 0
   _t.prototype.$limit = 1
@@ -35,6 +36,12 @@ window.lock_mixin = (_t)->
     else
       @$drain_cb = on_end
     return
+  
+  _t.prototype.wrap = (on_end, nest)->
+    await @lock defer()
+    nest (res...)=>
+      @unlock()
+      on_end res... 
 
 class window.Lock_mixin
   lock_mixin @
