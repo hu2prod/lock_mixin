@@ -38,10 +38,10 @@ window.lock_mixin = (_t)->
     return
   
   _t.prototype.wrap = (on_end, nest)->
-    await @lock defer()
-    nest (res...)=>
-      @unlock()
-      on_end res... 
+    @lock ()=>
+      nest (res...)=>
+        @unlock()
+        on_end res...
 
 class window.Lock_mixin
   lock_mixin @
