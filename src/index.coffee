@@ -1,5 +1,3 @@
-require 'fy'
-
 window = global
 window.lock_mixin_constructor = (_t)->
   _t.$lock_cb_list = []
@@ -19,7 +17,9 @@ window.lock_mixin = (_t)->
     return
   
   _t.prototype.unlock = ()->
-    call_later ()=>
+    # removed call_later from fy
+    # -1 dep, and not signifficantly worse
+    setTimeout ()=>
       if @$lock_cb_list.length
         cb = @$lock_cb_list.shift()
         cb()
@@ -28,6 +28,7 @@ window.lock_mixin = (_t)->
         if @$count == 0 and cb = @$drain_cb
           @$drain_cb = null
           cb()
+    , 0
     return
   
   _t.prototype.drain = (on_end)->
