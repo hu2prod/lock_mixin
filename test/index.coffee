@@ -23,8 +23,10 @@ describe "index section", ()->
     it "pass", (done)->
       target = new Lock_mixin
       assert.equal target.$count, 0
+      assert.equal target.can_lock(), true
       await target.lock defer()
       assert.equal target.$count, 1
+      assert.equal target.can_lock(), false
       target.unlock()
       assert.equal target.$count, 1
       await setTimeout defer(), 10

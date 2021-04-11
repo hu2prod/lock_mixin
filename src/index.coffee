@@ -16,6 +16,8 @@ window.lock_mixin = (_t)->
       @$lock_cb_list.push on_end
     return
   
+  _t.prototype.can_lock = ()-> @$count < @$limit
+  
   _t.prototype.unlock = ()->
     # removed call_later from fy
     # -1 dep, and not signifficantly worse
