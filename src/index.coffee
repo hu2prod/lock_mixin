@@ -22,11 +22,12 @@ window.lock_mixin = (_t)->
     # removed call_later from fy
     # -1 dep, and not signifficantly worse
     setTimeout ()=>
-      if @$lock_cb_list.length
+      @$count--
+      if @$lock_cb_list.length and @$count < @$limit
+        @$count++
         cb = @$lock_cb_list.shift()
         cb()
       else
-        @$count--
         if @$count == 0 and cb = @$drain_cb
           @$drain_cb = null
           cb()
